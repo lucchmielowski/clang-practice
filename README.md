@@ -1,0 +1,2 @@
+# clang-practice
+Practicing C 
