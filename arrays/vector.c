@@ -113,6 +113,95 @@ void jarray_print(JArray *arrptr) {
     printf("------------------------\n");
 }
 
+int jarray_get_size(JArray *arrptr) {
+    return arrptr->size;
+}
+
+int jarray_get_capacity(JArray *arrptr) {
+    return arrptr->capacity;
+}
+
+bool jarray_is_empty(JArray *arrptr) {
+    return arrptr->size <= 0;
+}
+
+int jarray_at(JArray *arrptr, int index) {
+    if (index < 0 || index > arrptr->size -1) {
+        exit(EXIT_FAILURE);
+    }
+
+    return *(arrptr->data + index);
+}
+
+int jarray_insert(JArray *arrptr, int value, int index) {
+    if(index < 0 || index > arrptr->size-1) {
+        exit(EXIT_FAILURE);
+    }
+
+    jarray_resize_for_size(arrptr, arrptr->size +1);
+
+    int end_index = arrptr->size - 1;
+    for (int i = end_index + 1; i > index; --i) {
+        *(arrptr->data + i) = *(arrptr->data + i - 1);
+    }
+
+    *(arrptr->data + index) = value;
+    arrptr->size += 1;
+}
+
+void jarray_prepend(JArray *arrptr, int item) {
+    jarray_resize_for_size(arrptr, arrptr->size +1);
+    int end_index = arrptr->size - 1;
+
+    for (int i = end_index + 1; i > 0; --i) {
+        *(arrptr->data + i) = *(arrptr->data + i -1);
+    }
+
+    *(arrptr->data) = item;
+    arrptr->size += 1;
+}
+
+int jarray_pop(JArray *arrptr) {
+    const int lastValue = *(arrptr->data + (arrptr->size - 1));
+    jarray_resize_for_size(arrptr, arrptr->size - 1);
+    arrptr->size -= 1;
+    return lastValue;
+}
+
+void jarray_delete(JArray *arrptr, int index) {
+    int end_index = arrptr->size - 1;
+    if(index < 0 || index > end_index) {
+        exit(EXIT_FAILURE);
+    }
+    for (int i = index; i < end_index; ++i) {
+        *(arrptr->data + i) = *(arrptr->data + i + 1);
+    }
+
+    jarray_resize_for_size(arrptr, arrptr->size - 1);
+    arrptr->size -= 1;
+}
+
+void jarray_remove(JArray *arrptr, int value) {
+    int end_index = arrptr->size - 1;
+
+    for (int i = 0; i < end_index; i++) {
+        if(value == *(arrptr->data + i)) {
+            jarray_delete(arrptr, i);
+        }
+    }
+}
+
+int jarray_find(JArray *arrptr, int value) {
+    int default_value = -1;
+    for(int i = 0; i < arrptr->size; ++i) {
+        if(*(arrptr->data + i ) == value ) {
+            return i;
+        }
+    }
+
+    return default_value;
+}
+
 // ========================
 
 // TODO: Add tests
